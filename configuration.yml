@@ -1,0 +1,8 @@
+data_source postgres_sport:
+  type: postgres
+  host: postgres_data
+  port: '5432'
+  username: ${POSTGRES_USER_METIER}
+  password: ${POSTGRES_PASSWORD_METIER}
+  database: ${POSTGRES_DB_METIER}
+  schema: public

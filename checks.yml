@@ -1,0 +1,5 @@
+checks for activites_strava:
+  - min(distance_m) >= 0:
+      name: Pas de distance negative dans les remontees Strava
+  - min(duree_s) > 0:
+      name: Pas de duree negative ou nulle dans les remontees Strava

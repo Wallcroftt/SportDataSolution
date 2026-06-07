@@ -1,0 +1,36 @@
+# ==========================================
+# Configuration PostgreSQL (Base de données)
+# ==========================================
+# Identifiants de connexion à la base de données
+POSTGRES_USER=juliette
+POSTGRES_PASSWORD=votre_mot_de_passe_securise
+POSTGRES_DB=sport_db
+
+# Chaîne de connexion complète utilisée par SQLAlchemy (dans Airflow)
+# Format : postgresql://utilisateur:mot_de_passe@hote:port/nom_de_la_base
+# (Remplacer "sport_postgres_db" par "localhost" si exécution hors Docker)
+DB_CONNECTION=postgresql://juliette:votre_mot_de_passe_securise@sport_postgres_db:5432/sport_db
+
+# ==========================================
+# Clés d'API (Services Tiers)
+# ==========================================
+# Clé pour la validation des distances Domicile-Travail (Google Cloud Console)
+GOOGLE_MAPS_KEY=AIzaSy_votre_cle_api_google_maps_ici
+
+# Token ou Webhook pour l'envoi d'alertes temps réel (Consumer Python)
+SLACK_API_TOKEN=xoxb-votre-token-slack-ici
+
+# ==========================================
+# Configuration Métier & Chemins (Airflow)
+# ==========================================
+# Chemin interne du conteneur Docker pointant vers le dossier contenant Donnees_RH.xlsx
+DATA_FOLDER=/opt/airflow/data
+
+# Adresse physique de l'entreprise (Point de référence pour l'API Google Maps)
+COMPANY_ADDRESS=1362 Av. des Platanes, 34970 Lattes
+
+# ==========================================
+# Configuration Streaming (Redpanda / Kafka)
+# ==========================================
+# Adresse d'écoute du broker Kafka/Redpanda
+KAFKA_BROKER_URL=localhost:19092

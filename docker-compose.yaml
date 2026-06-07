@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  # --- 1. STOCKAGE (Postgres) ---
+  postgres_data:
+    image: postgres:13
+    container_name: sport_postgres_db
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER_METIER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD_METIER}
+      - POSTGRES_DB=${POSTGRES_DB_METIER}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data_volume:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER_METIER}", "-d", "${POSTGRES_DB_METIER}"]
+      interval: 5s
+      retries: 5
+
+  postgres_airflow:
+    image: postgres:13
+    container_name: airflow_postgres
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER_AIRFLOW}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD_AIRFLOW}
+      - POSTGRES_DB=${POSTGRES_DB_AIRFLOW}
+    volumes:
+      - postgres_airflow_volume:/var/lib/postgresql/data
+
+  # --- 2. STREAMING (Redpanda = Kafka) ---
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:latest
+    container_name: sport_redpanda
+    command:
+      - redpanda start
+      - --smp 1
+      - --memory 1G
+      - --reserve-memory 0M
+      - --overprovisioned
+      - --kafka-addr internal://0.0.0.0:9092,external://0.0.0.0:19092
+      - --advertise-kafka-addr internal://redpanda:9092,external://localhost:19092
+      - --pandaproxy-addr internal://0.0.0.0:8082,external://0.0.0.0:8083
+      - --advertise-pandaproxy-addr internal://redpanda:8082,external://localhost:8083
+    ports:
+      - "19092:19092"
+      - "8083:8083"
+
+  # Interface graphique Redpanda (http://localhost:8081)
+  redpanda-console:
+    image: docker.redpanda.com/redpandadata/console:latest
+    container_name: sport_console
+    restart: on-failure
+    environment:
+      - KAFKA_BROKERS=redpanda:9092
+    ports:
+      - "8081:8080"
+    depends_on:
+      - redpanda
+
+  # --- 3. ORCHESTRATION (Airflow) ---
+  airflow-webserver:
+    build: .
+    container_name: sport_airflow
+    command: bash -c "rm -f /opt/airflow/airflow-webserver.pid ; airflow db init && airflow users create --username ${AIRFLOW_ADMIN_USER} --firstname Admin --lastname User --role Admin --email admin@example.com --password ${AIRFLOW_ADMIN_PASSWORD} && airflow webserver --port 8080 & airflow scheduler"
+    restart: always
+    depends_on:
+      postgres_airflow:
+        condition: service_started
+      postgres_data:
+        condition: service_healthy
+    environment:
+      - POSTGRES_USER_METIER=${POSTGRES_USER_METIER}
+      - POSTGRES_PASSWORD_METIER=${POSTGRES_PASSWORD_METIER}
+      - POSTGRES_DB_METIER=${POSTGRES_DB_METIER}
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://${POSTGRES_USER_AIRFLOW}:${POSTGRES_PASSWORD_AIRFLOW}@postgres_airflow/${POSTGRES_DB_AIRFLOW}
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - DATA_FOLDER=/opt/airflow/data
+      - DB_CONNECTION=postgresql+psycopg2://${POSTGRES_USER_METIER}:${POSTGRES_PASSWORD_METIER}@postgres_data:5432/${POSTGRES_DB_METIER}
+      - GOOGLE_MAPS_KEY=${GOOGLE_MAPS_KEY}
+      - AIRFLOW__WEBSERVER__BASE_URL=${AIRFLOW_BASE_URL}
+      - AIRFLOW__WEBSERVER__ALLOWED_HOSTS=*
+      - AIRFLOW__WEBSERVER__WEB_SERVER_PORT=8080
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./data:/opt/airflow/data
+      - ./logs:/opt/airflow/logs
+    ports:
+      - "8888:8080"
+
+volumes:
+  postgres_airflow_volume:
+  postgres_data_volume:

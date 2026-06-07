@@ -1,0 +1,11 @@
+apache-airflow-providers-postgres
+pandas
+openpyxl
+psycopg2-binary
+sqlalchemy
+requests
+kafka-python
+googlemaps
+faker
+soda-core-postgres
+python-dotenv
