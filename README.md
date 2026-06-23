@@ -84,6 +84,7 @@ cd sport-data-solution
 ```bash
 docker-compose up -d --build
 
+```
 
 ### Exécution du flux de données
 
