@@ -42,7 +42,6 @@ bloquer les données aberrantes avant le calcul des primes.
 
 ## 📂 Structure du Projet
 
-```text
 📁 projet_12/
 ├── 📁 airflow/
 │   └── 📁 dags/
@@ -85,7 +84,6 @@ cd sport-data-solution
 ```bash
 docker-compose up -d --build
 
-```
 
 ### Exécution du flux de données
 
