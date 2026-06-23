@@ -59,7 +59,7 @@ bloquer les données aberrantes avant le calcul des primes.
 ├── requirements.txt                        # Dépendances Python
 ├── excel.py                                # Script de génération du dictionnaire de données
 └── Dictionnaire_Donnees_Sport_RH.xlsx      # Dictionnaire de données métier et technique
-
+```
 
 ## 🚀 Installation et Démarrage
 
