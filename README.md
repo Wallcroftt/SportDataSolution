@@ -7,9 +7,11 @@ Le pipeline ingère des données de performances sportives en temps réel, garan
 
 ## 🏗️ Architecture Technique
 
-L'architecture repose sur un modèle hybride combinant traitement en streaming (temps réel) et traitement par lots (Batch) :
+L'architecture repose sur un modèle hybride combinant traitement en streaming (temps réel) et traitement 
+par lots (Batch) :
 
-* **Ingestion (Temps Réel) :** `Python (Producer/Consumer)` sur `Redpanda` (Architecture compatible API Apache Kafka)
+* **Ingestion (Temps Réel) :** `Python (Producer/Consumer)` sur `Redpanda` (Architecture compatible 
+API Apache Kafka)
 * **Stockage (Zone d'atterrissage & Data Warehouse) :** `PostgreSQL`
 * **Qualité des Données (Data Quality) :** `SODA Core` (Pushdown computation)
 * **Validation Géospatiale :** `API Google Maps`
@@ -21,9 +23,14 @@ L'architecture repose sur un modèle hybride combinant traitement en streaming (
 
 ## ✨ Fonctionnalités Clés
 
-* **Streaming & Alerting :** Capture des événements sportifs en temps réel avec Redpanda/Kafka et envoi d'une notification Slack instantanée pour les performances supérieures à 10 km.
-* **Fenêtre Glissante (Rolling Window) :** Le calcul des KPI orchestré par Airflow agrège dynamiquement les activités des **12 derniers mois** pour valider l'éligibilité aux jours de congés, conformément aux règles métiers.
-* **Validation des Déclarations RH :** Vérification automatisée des distances Domicile-Travail via l'API Google Maps pour détecter les anomalies déclaratives. La règle stricte bloque tout trajet supérieur à 15 km pour la marche/course, et supérieur à 25 km pour le vélo/trottinette.
+* **Streaming & Alerting :** Capture des événements sportifs en temps réel avec Redpanda/Kafka et envoi 
+d'une notification Slack instantanée pour les performances supérieures à 10 km.
+* **Fenêtre Glissante (Rolling Window) :** Le calcul des KPI orchestré par Airflow agrège dynamiquement 
+les activités des **12 derniers mois** pour valider l'éligibilité aux jours de congés, conformément aux 
+règles métiers.
+* **Validation des Déclarations RH :** Vérification automatisée des distances Domicile-Travail via
+l'API Google Maps pour détecter les anomalies déclaratives. La règle stricte bloque tout trajet supérieur 
+à 15 km pour la marche/course, et supérieur à 25 km pour le vélo/trottinette.
 * **Idempotence & Truncate/Load :** Le pipeline sécurise les insertions en base de données (`TRUNCATE` de la table finale et `DELETE` des anomalies) pour éviter toute duplication en cas de relance du traitement.
 * **Tests de Qualité Automatisés :** Validation des données entrantes avec SODA Core (règles YAML) pour bloquer les données aberrantes avant le calcul des primes.
 
