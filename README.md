@@ -1,13 +1,16 @@
-```markdown
 # 🏅 Sport Data Solution - Architecture Hybride (Temps Réel & Batch)
 
-Ce projet propose une infrastructure de données complète (Data Engineering) visant à automatiser le calcul des primes sportives et des congés "Bien-être" pour les salariés d'une entreprise. 
+Ce projet propose une infrastructure de données complète (Data Engineering) visant à automatiser le 
+calcul des primes sportives et des congés "Bien-être" pour les salariés d'une entreprise. 
 
-Le pipeline ingère des données de performances sportives en temps réel, garantit leur qualité, valide les données déclaratives RH via des services tiers, et croise l'ensemble pour une restitution financière claire.
+Le pipeline ingère des données de performances sportives en temps réel, garantit leur qualité, valide 
+les données déclaratives RH via des services tiers, et croise l'ensemble pour une restitution 
+financière claire.
 
 ## 🏗️ Architecture Technique
 
-L'architecture repose sur un modèle hybride combinant traitement en streaming (temps réel) et traitement 
+L'architecture repose sur un modèle hybride combinant traitement en streaming (temps réel) et 
+traitement 
 par lots (Batch) :
 
 * **Ingestion (Temps Réel) :** `Python (Producer/Consumer)` sur `Redpanda` (Architecture compatible 
@@ -29,10 +32,13 @@ d'une notification Slack instantanée pour les performances supérieures à 10 k
 les activités des **12 derniers mois** pour valider l'éligibilité aux jours de congés, conformément aux 
 règles métiers.
 * **Validation des Déclarations RH :** Vérification automatisée des distances Domicile-Travail via
-l'API Google Maps pour détecter les anomalies déclaratives. La règle stricte bloque tout trajet supérieur 
+l'API Google Maps pour détecter les anomalies déclaratives. La règle stricte bloque tout trajet 
+supérieur 
 à 15 km pour la marche/course, et supérieur à 25 km pour le vélo/trottinette.
-* **Idempotence & Truncate/Load :** Le pipeline sécurise les insertions en base de données (`TRUNCATE` de la table finale et `DELETE` des anomalies) pour éviter toute duplication en cas de relance du traitement.
-* **Tests de Qualité Automatisés :** Validation des données entrantes avec SODA Core (règles YAML) pour bloquer les données aberrantes avant le calcul des primes.
+* **Idempotence & Truncate/Load :** Le pipeline sécurise les insertions en base de données (`TRUNCATE` 
+de la table finale et `DELETE` des anomalies) pour éviter toute duplication en cas de relance du traitement.
+* **Tests de Qualité Automatisés :** Validation des données entrantes avec SODA Core (règles YAML) pour 
+bloquer les données aberrantes avant le calcul des primes.
 
 ## 📂 Structure du Projet
 
@@ -54,7 +60,6 @@ l'API Google Maps pour détecter les anomalies déclaratives. La règle stricte 
 ├── excel.py                                # Script de génération du dictionnaire de données
 └── Dictionnaire_Donnees_Sport_RH.xlsx      # Dictionnaire de données métier et technique
 
-```
 
 ## 🚀 Installation et Démarrage
 
@@ -100,13 +105,16 @@ python kafka/producer.py
 ```
 
 3. **Orchestration Batch :**
-Se connecter à l'interface Airflow (`http://localhost:8080`), activer le `pipeline_sport_rh_v3_complet` et vérifier le passage des tests (Google Maps, SODA Core, KPI).
+Se connecter à l'interface Airflow (`http://localhost:8080`), activer le `pipeline_sport_rh_v3_complet` et 
+vérifier le passage des tests (Google Maps, SODA Core, KPI).
 
 ## 📖 Documentation et Dictionnaire de Données
 
-Pour faciliter la compréhension des règles métiers (calcul des primes, éligibilité) et retracer la provenance des données, un dictionnaire de données complet accompagne ce projet (`Dictionnaire_Donnees_Sport_RH.xlsx`).
+Pour faciliter la compréhension des règles métiers (calcul des primes, éligibilité) et retracer la provenance 
+des données, un dictionnaire de données complet accompagne ce projet (`Dictionnaire_Donnees_Sport_RH.xlsx`).
 
-Si l'architecture de la base de données est amenée à évoluer, ce dictionnaire peut être mis à jour en exécutant le script utilitaire suivant :
+Si l'architecture de la base de données est amenée à évoluer, ce dictionnaire peut être mis à jour en exécutant 
+le script utilitaire suivant :
 
 ```bash
 python excel.py
